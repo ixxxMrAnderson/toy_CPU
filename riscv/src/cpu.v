@@ -75,7 +75,7 @@ wire [31 : 0] ex_pc_i;
 //ex >> ex_mem
 wire [4 : 0] ex_aluop_o;
 wire [4 : 0] ex_rd_addr_o;
-wire [4 : 0] ex_mem_addr_o;
+wire [31 : 0] ex_mem_addr_o;
 wire ex_rd_enable_o;
 wire [31 : 0] ex_output_o;
 wire ex_ld_flag_o;

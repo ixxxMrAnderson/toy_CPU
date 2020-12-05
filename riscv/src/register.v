@@ -16,10 +16,14 @@ module register(
     );
     
     reg[31 : 0] regs[31 : 0];
+    integer i;
     
     //write 1
     always @ (posedge clk) begin
-        if (!rst && write_enable) begin
+        if (rst) begin
+            for (i = 0; i < 32; i = i + 1)
+                regs[i] = `Zero;
+        end else if (write_enable) begin
             if (write_addr != 5'b00000) //not zero register
                 regs[write_addr] <= write_data;
         end

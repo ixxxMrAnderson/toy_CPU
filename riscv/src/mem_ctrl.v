@@ -48,6 +48,7 @@ module mem_ctrl(
 				buffer_pointer <= 3'h1;
 				ram_state <= `Write;
 				ram_done_o <= `False;
+				inst_done_o <= `False;
 				cur_ram_addr <= ram_addr_i;
 				mem_a <= ram_addr_i;
 			end else if (ram_r_req) begin
@@ -55,6 +56,7 @@ module mem_ctrl(
 				buffer_pointer <= 3'h0;
 				ram_state <= `Read;
 				ram_done_o <= `False;
+				inst_done_o <= `False;
 				cur_ram_addr <= ram_addr_i;
 				mem_a <= ram_addr_i;
 			end else if (inst_req) begin
@@ -63,6 +65,7 @@ module mem_ctrl(
 				buffer_pointer <= 3'h0;
 				ram_state <= `IF;
 				inst_done_o <= `False;
+				ram_done_o <= `False;
 				cur_ram_addr <= inst_addr_i;
 			end else begin
 				ram_done_o <= `True;
@@ -70,6 +73,7 @@ module mem_ctrl(
 			end
 		end else if (ram_state == `Write) begin
 			ram_done_o <= `False;
+			inst_done_o <= `False;
 			case (buffer_pointer)
 				3'h1: begin
 					mem_dout <= data_buffer[15 : 8];
@@ -94,6 +98,7 @@ module mem_ctrl(
 			endcase
 		end else if (ram_state == `Read) begin
 			ram_done_o <= `False;
+			inst_done_o <= `False;
 			case (buffer_pointer)
 				3'h0: begin
 					mem_a <= cur_ram_addr + 1;
@@ -125,6 +130,7 @@ module mem_ctrl(
 			endcase
 		end else if (ram_state == `IF) begin
 			inst_done_o <= `False;
+			ram_done_o <= `False;
 			if (inst_addr_i != cur_ram_addr) begin
 				mem_wr <= `Read;
 				mem_a <= inst_addr_i;

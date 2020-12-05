@@ -12,7 +12,7 @@ module ex(
 
     output reg [`OpCodeLen - 1 : 0] aluop_o,
     output reg [4 : 0] rd_addr_o,
-    output reg [4 : 0] mem_addr_o,
+    output reg [31 : 0] mem_addr_o,
     output reg rd_enable_o,
     output reg [31 : 0] output_,
     output reg [31 : 0] branch_to,
@@ -28,6 +28,8 @@ module ex(
 
     always @ (*) begin
         if (!rst) begin
+            rd_enable_o = rd_enable;
+            rd_addr_o = rd;
             jump_flag = `False;
             case (aluop)
                 `EX_JAL: begin

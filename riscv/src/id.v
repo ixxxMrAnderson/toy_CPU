@@ -299,7 +299,7 @@ module id(
                         aluop = `EX_SB;
                         alusel = `EX_RES_LD_ST;
                         imm = { {20{inst[31]}} ,inst[31:25] ,inst[11:7]};
-                        rd_enable = `WriteEnable;
+                        rd_enable = `WriteDisable;
                         r1_read_enable = `ReadEnable;
                         r2_read_enable = `ReadEnable;
                         use_imm_instead = 1'b0; 
@@ -308,7 +308,7 @@ module id(
                         aluop = `EX_SH;
                         alusel = `EX_RES_LD_ST;
                         imm = { {20{inst[31]}} ,inst[31:25] ,inst[11:7]};
-                        rd_enable = `WriteEnable;
+                        rd_enable = `WriteDisable;
                         r1_read_enable = `ReadEnable;
                         r2_read_enable = `ReadEnable;
                         use_imm_instead = 1'b0; 
@@ -317,7 +317,7 @@ module id(
                         aluop = `EX_SW;
                         alusel = `EX_RES_LD_ST;
                         imm = { {20{inst[31]}} ,inst[31:25] ,inst[11:7]};
-                        rd_enable = `WriteEnable;
+                        rd_enable = `WriteDisable;
                         r1_read_enable = `ReadEnable;
                         r2_read_enable = `ReadEnable;
                         use_imm_instead = 1'b0; 
@@ -448,6 +448,8 @@ module id(
             r2 = mem_forward;
         end else if (r2_read_enable) begin
             r2 = r2_data_i;
+        end else if (use_imm_instead) begin
+            r2 = imm;
         end else begin
             r2 = `Zero;
         end

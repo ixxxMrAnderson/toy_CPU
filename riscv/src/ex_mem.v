@@ -3,7 +3,7 @@ module ex_mem(
     input wire rst,
     input wire [31 : 0] rd_data_i,
     input wire [4 : 0] rd_addr_i,
-    input wire [4 : 0] mem_addr_i,
+    input wire [31 : 0] mem_addr_i,
     input wire [`OpCodeLen - 1 : 0] aluop_i,
     input wire rd_enable_i,
 
