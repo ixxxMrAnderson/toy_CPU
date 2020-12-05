@@ -40,8 +40,8 @@ module id(
     
     //Decode: Get opcode, imm, rd, and the addr of rs1&rs2
 
-    assign r1_addr_o = inst[19 : 15];
-    assign r2_addr_o = inst[24 : 20];
+    assign r1_addr = inst[19 : 15];
+    assign r2_addr = inst[24 : 20];
     assign rd = inst[11 : 7];
 
     always @(*) begin
@@ -52,6 +52,7 @@ module id(
         aluop = `EX_NOP;
         alusel = `EX_RES_NOP;
         use_imm_instead = 1'b0;
+        pc_o = pc_i;
         case (opcode)
             `EXE: begin
                 case (func7)   
@@ -411,10 +412,21 @@ module id(
         endcase
     end
 
+    reg r1_stall;
+    reg r2_stall;
+
     //Get rs1
     always @ (*) begin
+        r1_stall = `False;
         if (rst) begin
             r1 = `Zero;
+        end else if (ld_flag && r1_read_enable && ex_wb_addr == rd) begin
+            r1 = `Zero;
+            r1_stall = `True;
+        end else if (ex_wb_flag && r1_read_enable && ex_wb_addr == rd) begin
+            r1 = ex_forward;
+        end else if (mem_wb_flag && r1_read_enable && mem_wb_addr == rd) begin
+            r1 = mem_forward;
         end else if (r1_read_enable) begin
             r1 = r1_data_i;
         end else begin
@@ -424,14 +436,23 @@ module id(
 
     //Get rs2
     always @ (*) begin
+        r2_stall = `False;
         if (rst) begin
             r2 = `Zero;
+        end else if (ld_flag && r2_read_enable && ex_wb_addr == rd) begin
+            r2 = `Zero;
+            r2_stall = `True;
+        end else if (ex_wb_flag && r2_read_enable && ex_wb_addr == rd) begin
+            r2 = ex_forward;
+        end else if (mem_wb_flag && r2_read_enable && mem_wb_addr == rd) begin
+            r2 = mem_forward;
         end else if (r2_read_enable) begin
             r2 = r2_data_i;
         end else begin
-            if (use_imm_instead) r2 = imm;
-            else r2 = `Zero;
+            r2 = `Zero;
         end
     end
+
+    assign id_stall = r1_stall | r2_stall;
 
 endmodule

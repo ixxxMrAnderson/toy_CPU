@@ -11,11 +11,11 @@ module stall(
 		if (rst) begin
 			stall_signal = 5'b11111;
 		end else if (mem_stall) begin
-			stall_signal = 5'b11111;
+			stall_signal = 5'b11011;
 		end else if (id_stall) begin
-			stall_signal = 5'b11111;
+			stall_signal = 5'b11011;
 		end else if (if_stall) begin
-			stall_signal = 5'b11111;
+			stall_signal = 5'b11011;
 		end else begin
 			stall_signal = 5'b00000;
 		end

@@ -104,6 +104,7 @@ wire [31 : 0] mem_ram_r_data_i;
 wire inst_req;
 wire inst_done;
 wire [31 : 0] inst_addr_o;
+wire [31 : 0] inst_pc;
 
 //wb
 wire [4 : 0] wb_addr;
@@ -125,7 +126,7 @@ if_ if_unit(
   .clk(clk_in), .rst(rst_in_),
   .pc_i(if_pc_i), .inst_i(if_inst_i), 
   .inst_req(inst_req), .inst_addr_o(inst_addr_o),
-  .inst_o(if_inst_o), .pc_o(if_pc_o), .inst_done(inst_done),
+  .inst_o(if_inst_o), .pc_o(if_pc_o), .inst_done(inst_done), .inst_pc(inst_pc),
   .if_stall(if_stall_o)
 );
 
@@ -192,7 +193,7 @@ mem_ctrl mem_ctrl_unit(
   .clk(clk_in), .rst(rst_in_),
   .ram_r_req(mem_ram_r_req_o), .ram_w_req(mem_ram_w_req_o), .ram_addr_i(mem_ram_addr_o), .ram_w_data_i(mem_ram_w_data_o), 
   .ram_r_data_o(mem_ram_r_data_i), .ram_done_o(mem_ram_done_i), 
-  .inst_addr_i(inst_addr_o), .inst_req(inst_req), .inst_o(if_inst_i), .inst_done_o(inst_done),
+  .inst_addr_i(inst_addr_o), .inst_req(inst_req), .inst_o(if_inst_i), .inst_done_o(inst_done), .inst_pc(inst_pc),
   .mem_din(mem_din), .mem_dout(mem_dout), .mem_wr(mem_wr), .mem_a(mem_a)
 );
 
