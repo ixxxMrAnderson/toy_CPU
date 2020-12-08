@@ -3,6 +3,7 @@ module if_id(
     input wire rst,
     input wire [31 : 0] pc_i,
     input wire [31 : 0] inst_i,
+    input wire jump_flag,
     output reg [31 : 0] pc_o,
     output reg [31 : 0] inst_o,
 
@@ -10,7 +11,7 @@ module if_id(
 );
     
     always @ (posedge clk) begin
-        if (rst) begin
+        if (rst || jump_flag) begin
             pc_o <= `Zero;
             inst_o <= `Zero;
         end else if (stall_signal[1]) begin

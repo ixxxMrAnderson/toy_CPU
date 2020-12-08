@@ -9,6 +9,8 @@ module id_ex(
     input wire [`OpCodeLen - 1 : 0] aluop_i,
     input wire [`OpSelLen - 1 : 0] alusel_i,
 
+    input wire jump_flag,
+
     input wire [31 : 0] pc_i,
     output reg [31 : 0] pc_o,
 
@@ -24,7 +26,7 @@ module id_ex(
 );
 
     always @ (posedge clk) begin
-        if (rst) begin
+        if (rst || jump_flag) begin
             r1_o <= `Zero;
             r2_o <= `Zero;
             imm_o <= `Zero;

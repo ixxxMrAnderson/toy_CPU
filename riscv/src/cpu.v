@@ -134,7 +134,7 @@ if_id if_id_unit(
   .clk(clk_in), .rst(rst_in_),
   .pc_i(if_pc_o), .inst_i(if_inst_o),
   .pc_o(id_pc_i), .inst_o(id_inst_i),
-  .stall_signal(stall_signal)
+  .stall_signal(stall_signal), .jump_flag(jump_flag)
 );
 
 id id_unit(
@@ -160,7 +160,7 @@ id_ex id_ex_unit(
   .r1_i(id_r1_o), .r2_i(id_r2_o), .imm_i(id_imm_o), .rd_i(id_rd_o), .rd_enable_i(id_rd_enable_o), .aluop_i(id_aluop_o), .alusel_i(id_alusel_o),
   .pc_i(id_pc_o), .pc_o(ex_pc_i), 
   .r1_o(ex_r1_i), .r2_o(ex_r2_i), .imm_o(ex_imm_i), .rd_o(ex_rd_i), .rd_enable_o(ex_rd_enable_i), .aluop_o(ex_aluop_i), .alusel_o(ex_alusel_i),
-  .stall_signal(stall_signal)
+  .stall_signal(stall_signal), .jump_flag(jump_flag)
 );
 
 ex ex_unit(
