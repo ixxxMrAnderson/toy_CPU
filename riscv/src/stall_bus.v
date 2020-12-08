@@ -15,7 +15,7 @@ module stall(
 		end else if (id_stall) begin
 			stall_signal = 5'b00111;
 		end else if (if_stall) begin
-			stall_signal = 5'b00001;
+			stall_signal = 5'b00011;
 		end else begin
 			stall_signal = 5'b00000;
 		end

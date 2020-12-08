@@ -47,7 +47,7 @@ always @ (*) begin
                 rd_data_o       = rd_data_i;
             end
             `EX_LB: begin
-                ram_r_req_o     = `True && !ram_done_i;
+                ram_r_req_o     = `True;
                 ram_w_req_o     = `False;
                 ram_w_data_o    = `Zero;
                 ram_addr_o      = mem_addr_i;
@@ -56,7 +56,7 @@ always @ (*) begin
                 mem_stall       = !ram_done_i;
             end
             `EX_LBU: begin
-                ram_r_req_o     = `True && !ram_done_i;
+                ram_r_req_o     = `True;
                 ram_w_req_o     = `False;
                 ram_w_data_o    = `Zero;
                 ram_addr_o      = mem_addr_i;
@@ -65,7 +65,7 @@ always @ (*) begin
                 mem_stall       = !ram_done_i;
             end
             `EX_LH: begin
-                ram_r_req_o     = `True && !ram_done_i;
+                ram_r_req_o     = `True;
                 ram_w_req_o     = `False;
                 ram_w_data_o    = `Zero;
                 ram_addr_o      = mem_addr_i;
@@ -74,7 +74,7 @@ always @ (*) begin
                 mem_stall       = !ram_done_i;
             end
             `EX_LHU: begin
-                ram_r_req_o     = `True && !ram_done_i;
+                ram_r_req_o     = `True;
                 ram_w_req_o     = `False;
                 ram_w_data_o    = `Zero;
                 ram_addr_o      = mem_addr_i;
@@ -83,7 +83,7 @@ always @ (*) begin
                 mem_stall       = !ram_done_i;
             end
             `EX_LW: begin
-                ram_r_req_o     = `True && !ram_done_i;
+                ram_r_req_o     = `True;
                 ram_w_req_o     = `False;
                 ram_w_data_o    = `Zero;
                 ram_addr_o      = mem_addr_i;
@@ -93,7 +93,7 @@ always @ (*) begin
             end
             `EX_SB: begin
                 ram_r_req_o     = `False;
-                ram_w_req_o     = `True && !ram_done_i;
+                ram_w_req_o     = `True;
                 ram_addr_o      = mem_addr_i;
                 ram_w_data_o    = rd_data_i[7 : 0];
                 rd_data_o       = rd_data_i;
@@ -102,7 +102,7 @@ always @ (*) begin
             end
             `EX_SH: begin
                 ram_r_req_o     = `False;
-                ram_w_req_o     = `True && !ram_done_i;
+                ram_w_req_o     = `True;
                 ram_addr_o      = mem_addr_i;
                 ram_w_data_o    = rd_data_i[15 : 0];
                 rd_data_o       = rd_data_i;
@@ -111,7 +111,7 @@ always @ (*) begin
             end
             `EX_SW: begin
                 ram_r_req_o     = `False;
-                ram_w_req_o     = `True && !ram_done_i;
+                ram_w_req_o     = `True;
                 ram_addr_o      = mem_addr_i;
                 ram_w_data_o    = rd_data_i[31 : 0];
                 rd_data_o       = rd_data_i;

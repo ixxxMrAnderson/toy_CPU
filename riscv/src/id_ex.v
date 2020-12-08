@@ -35,7 +35,16 @@ module id_ex(
             aluop_o <= `Zero;
             alusel_o <= `Zero;
             pc_o <= `Zero;
+        end else if (stall_signal[3]) begin
         end else if (stall_signal[2]) begin
+            r1_o <= `Zero;
+            r2_o <= `Zero;
+            imm_o <= `Zero;
+            rd_o <= `Zero;
+            rd_enable_o <= `Zero;
+            aluop_o <= `Zero;
+            alusel_o <= `Zero;
+            pc_o <= `Zero;
         end else begin
             r1_o <= r1_i;
             r2_o <= r2_i;

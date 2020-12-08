@@ -45,18 +45,15 @@ module mem_ctrl(
 			inst_done_o <= `False;
 			mem_wr <= `Read;
 			if (ram_w_req) begin
-				data_buffer <= ram_w_data_i;
-				mem_dout <= ram_w_data_i[7 : 0];
-				mem_wr <= `Write;
-				buffer_pointer <= 3'h1;
+				// mem_dout <= ram_w_data_i[7 : 0];
+				mem_wr <= `Read;
+				mem_a <= `Zero;
+				buffer_pointer <= 3'h0;
 				ram_state <= `Write;
-				cur_ram_addr <= ram_addr_i;
-				mem_a <= ram_addr_i;
 			end else if (ram_r_req) begin
 				mem_wr <= `Read;
 				buffer_pointer <= 3'h0;
 				ram_state <= `Read;
-				cur_ram_addr <= ram_addr_i;
 				mem_a <= ram_addr_i;
 			end else if (inst_req) begin
 				mem_wr <= `Read;
@@ -66,10 +63,18 @@ module mem_ctrl(
 				cur_ram_addr <= inst_addr_i;
 			end else begin
 			end
-		end else if (ram_state == `Write) begin
+		end else if (ram_state == `Write && ram_w_req) begin
 			ram_done_o <= `False;
 			inst_done_o <= `False;
 			case (buffer_pointer)
+				3'h0: begin
+					data_buffer <= ram_w_data_i;
+					mem_dout <= ram_w_data_i[7 : 0];
+					mem_a <= ram_addr_i + 0;
+					cur_ram_addr <= ram_addr_i;
+					mem_wr <= `Write;
+					buffer_pointer <= 3'h1;
+				end
 				3'h1: begin
 					mem_dout <= data_buffer[15 : 8];
 					mem_a <= cur_ram_addr + 1;
@@ -91,32 +96,39 @@ module mem_ctrl(
 					ram_state <= `Vacant;
 				end 
 			endcase
-		end else if (ram_state == `Read) begin
+		end else if (ram_state == `Read && ram_r_req) begin
 			ram_done_o <= `False;
 			inst_done_o <= `False;
 			case (buffer_pointer)
 				3'h0: begin
-					mem_a <= cur_ram_addr + 1;
+					mem_a <= ram_addr_i;
+					cur_ram_addr <= ram_addr_i;
 					mem_wr <= `Read;
 					buffer_pointer <= 3'h1;
 				end
 				3'h1: begin
 					data_buffer[7 : 0] <= mem_din;
-					mem_a <= cur_ram_addr + 2;
+					mem_a <= cur_ram_addr + 1;
 					mem_wr <= `Read;
 					buffer_pointer <= 3'h2;
 				end
 				3'h2: begin
-					data_buffer[15 : 8] <= mem_din;
-					mem_a <= cur_ram_addr + 3;
+					data_buffer[7 : 0] <= mem_din;
+					mem_a <= cur_ram_addr + 2;
 					mem_wr <= `Read;
 					buffer_pointer <= 3'h3;
 				end 
 				3'h3: begin
-					data_buffer[23 : 16] <= mem_din;
+					data_buffer[15 : 8] <= mem_din;
+					mem_a <= cur_ram_addr + 3;
+					mem_wr <= `Read;
 					buffer_pointer <= 3'h4;
 				end 
 				3'h4: begin
+					data_buffer[23 : 16] <= mem_din;
+					buffer_pointer <= 3'h5;
+				end 
+				3'h5: begin
 					ram_r_data_o <= {mem_din, data_buffer[23 : 0]};
 					buffer_pointer <= 3'h0;
 					ram_done_o <= `True;
@@ -163,6 +175,11 @@ module mem_ctrl(
 					end 
 				endcase
 			end
+		end else begin
+			ram_done_o <= `False;
+			inst_done_o <= `False;
+			mem_wr <= `Read;
+			ram_state <= `Vacant;
 		end
 	end
 
