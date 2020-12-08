@@ -41,22 +41,20 @@ module mem_ctrl(
 			ram_state <= `Vacant;
 			inst_pc <= `Zero;
 		end else if (ram_state == `Vacant) begin
+			ram_done_o <= `False;
+			inst_done_o <= `False;
 			if (ram_w_req) begin
 				data_buffer <= ram_w_data_i;
 				mem_dout <= ram_w_data_i[7 : 0];
 				mem_wr <= `Write;
 				buffer_pointer <= 3'h1;
 				ram_state <= `Write;
-				ram_done_o <= `False;
-				inst_done_o <= `False;
 				cur_ram_addr <= ram_addr_i;
 				mem_a <= ram_addr_i;
 			end else if (ram_r_req) begin
 				mem_wr <= `Read;
 				buffer_pointer <= 3'h0;
 				ram_state <= `Read;
-				ram_done_o <= `False;
-				inst_done_o <= `False;
 				cur_ram_addr <= ram_addr_i;
 				mem_a <= ram_addr_i;
 			end else if (inst_req) begin
@@ -64,12 +62,8 @@ module mem_ctrl(
 				mem_a <= inst_addr_i;
 				buffer_pointer <= 3'h0;
 				ram_state <= `IF;
-				inst_done_o <= `False;
-				ram_done_o <= `False;
 				cur_ram_addr <= inst_addr_i;
 			end else begin
-				ram_done_o <= `True;
-				inst_done_o <= `True;
 			end
 		end else if (ram_state == `Write) begin
 			ram_done_o <= `False;
