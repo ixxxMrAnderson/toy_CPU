@@ -33,8 +33,7 @@ always @ (*) begin
         ram_addr_o      = `Zero;
         // ram_state       = 2'h0;
         mem_stall       = `False;
-    end
-    else begin
+    end else begin
         rd_addr_o = rd_addr_i;
         rd_enable_o = rd_enable_i;
         case(aluop_i)

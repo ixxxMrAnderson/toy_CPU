@@ -36,13 +36,14 @@ module mem_ctrl(
 			mem_dout <= 8'b00000000;
 			mem_a <= `Zero;
 			data_buffer <= `Zero;
-			mem_wr <= 1'b0;
+			mem_wr <= `Read;
 			buffer_pointer <= 3'h0;
 			ram_state <= `Vacant;
 			inst_pc <= `Zero;
 		end else if (ram_state == `Vacant) begin
 			ram_done_o <= `False;
 			inst_done_o <= `False;
+			mem_wr <= `Read;
 			if (ram_w_req) begin
 				data_buffer <= ram_w_data_i;
 				mem_dout <= ram_w_data_i[7 : 0];

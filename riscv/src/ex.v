@@ -28,7 +28,7 @@ module ex(
 
     always @ (*) begin
         if (!rst) begin
-            rd_enable_o = rd_enable;
+            rd_enable_o = (rd_enable && rd) ? 1'b1 : 1'b0;
             rd_addr_o = rd;
             jump_flag = `False;
             case (aluop)
