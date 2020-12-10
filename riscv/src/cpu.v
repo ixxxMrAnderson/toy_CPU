@@ -105,6 +105,7 @@ wire inst_req;
 wire inst_done;
 wire [31 : 0] inst_addr_o;
 wire [31 : 0] inst_pc;
+wire [3 : 0] buffer_pointer;
 
 //wb
 wire [4 : 0] wb_addr;
@@ -116,6 +117,8 @@ wire if_stall_o;
 wire id_stall_o;
 wire mem_stall_o;
 wire [4 : 0] stall_signal;
+
+assign dbgreg_dout = wb_enable ? wb_data : `Zero;
 
 pc_reg pc_reg_unit(
   .clk(clk_in), .rst(rst_in_), .jump_flag(jump_flag), .branch_to(branch_to),
@@ -186,7 +189,7 @@ mem mem_unit(
   .rd_data_o(mem_rd_data_o), .rd_addr_o(mem_rd_addr_o), .rd_enable_o(mem_rd_enable_o), 
   .mem_addr_i(mem_mem_addr_i), .ram_done_i(mem_ram_done_i), .ram_r_data_i(mem_ram_r_data_i), 
   .ram_r_req_o(mem_ram_r_req_o), .ram_w_req_o(mem_ram_w_req_o), .ram_addr_o(mem_ram_addr_o), .ram_w_data_o(mem_ram_w_data_o),  
-  .mem_stall(mem_stall_o)
+  .mem_stall(mem_stall_o), .buffer_pointer_o(buffer_pointer)
 );
 
 mem_ctrl mem_ctrl_unit(
@@ -194,7 +197,7 @@ mem_ctrl mem_ctrl_unit(
   .ram_r_req(mem_ram_r_req_o), .ram_w_req(mem_ram_w_req_o), .ram_addr_i(mem_ram_addr_o), .ram_w_data_i(mem_ram_w_data_o), 
   .ram_r_data_o(mem_ram_r_data_i), .ram_done_o(mem_ram_done_i), 
   .inst_addr_i(inst_addr_o), .inst_req(inst_req), .inst_o(if_inst_i), .inst_done_o(inst_done), .inst_pc(inst_pc),
-  .mem_din(mem_din), .mem_dout(mem_dout), .mem_wr(mem_wr), .mem_a(mem_a)
+  .mem_din(mem_din), .mem_dout(mem_dout), .mem_wr(mem_wr), .mem_a(mem_a), .buffer_pointer_i(buffer_pointer)
 );
 
 mem_wb mem_wb_unit(

@@ -437,7 +437,7 @@ module id(
     //Get rs2
     always @ (*) begin
         r2_stall = `False;
-        if (rst) begin
+        if (rst == `True) begin
             r2 = `Zero;
         end else if (ld_flag && r2_read_enable && ex_wb_addr == r2_addr && r2_addr) begin
             r2 = `Zero;

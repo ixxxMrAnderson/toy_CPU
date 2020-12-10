@@ -8,7 +8,7 @@ module stall(
 );
 
 	always @ (*) begin
-		if (rst) begin
+		if (rst == `True) begin
 			stall_signal = 5'b11111;
 		end else if (mem_stall) begin
 			stall_signal = 5'b11111;

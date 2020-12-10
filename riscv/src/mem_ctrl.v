@@ -11,6 +11,7 @@ module mem_ctrl(
 	input wire ram_r_req,
 	input wire ram_w_req,
 	input wire [31 : 0] ram_addr_i,
+	input wire [3 : 0] buffer_pointer_i,
 	input wire [31 : 0] ram_w_data_i,
 	output reg [31 : 0] ram_r_data_o,
 	output reg ram_done_o,
@@ -45,10 +46,13 @@ module mem_ctrl(
 			inst_done_o <= `False;
 			mem_wr <= `Read;
 			if (ram_w_req) begin
-				// mem_dout <= ram_w_data_i[7 : 0];
+				data_buffer <= ram_w_data_i;
 				mem_wr <= `Read;
 				mem_a <= `Zero;
-				buffer_pointer <= 3'h0;
+				if (ram_addr_i[17 : 16] != 2'b11) 
+					buffer_pointer <= buffer_pointer_i;
+				else 
+					buffer_pointer <= 3'h3;
 				ram_state <= `Write;
 			end else if (ram_r_req) begin
 				mem_wr <= `Read;
@@ -68,28 +72,26 @@ module mem_ctrl(
 			inst_done_o <= `False;
 			case (buffer_pointer)
 				3'h0: begin
-					data_buffer <= ram_w_data_i;
-					mem_dout <= ram_w_data_i[7 : 0];
-					mem_a <= ram_addr_i + 0;
-					cur_ram_addr <= ram_addr_i;
+					mem_dout <= ram_w_data_i[31 : 24];
+					mem_a <= ram_addr_i + 3;
 					mem_wr <= `Write;
 					buffer_pointer <= 3'h1;
 				end
 				3'h1: begin
-					mem_dout <= data_buffer[15 : 8];
-					mem_a <= cur_ram_addr + 1;
+					mem_dout <= ram_w_data_i[23 : 16];
+					mem_a <= ram_addr_i + 2;
 					mem_wr <= `Write;
 					buffer_pointer <= 3'h2;
 				end
 				3'h2: begin
-					mem_dout <= data_buffer[23 : 16];
-					mem_a <= cur_ram_addr + 2;
+					mem_dout <= ram_w_data_i[15 : 8];
+					mem_a <= ram_addr_i + 1;
 					mem_wr <= `Write;
 					buffer_pointer <= 3'h3;
 				end
 				3'h3: begin
-					mem_dout <= data_buffer[31 : 24];
-					mem_a <= cur_ram_addr + 3;
+					mem_dout <= ram_w_data_i[7 : 0];
+					mem_a <= ram_addr_i;
 					mem_wr <= `Write;
 					buffer_pointer <= 3'h0;
 					ram_done_o <= `True;

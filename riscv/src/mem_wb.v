@@ -15,7 +15,7 @@ module mem_wb(
     always @ (posedge clk) begin
         if (rst || stall_signal[4]) begin
             rd_data_o <= `Zero;
-            rd_addr_o <= `RegAddrLen'h0;
+            rd_addr_o <= 5'b00000;
             rd_enable_o <= `WriteDisable;
         end else begin
             rd_data_o <= rd_data_i;

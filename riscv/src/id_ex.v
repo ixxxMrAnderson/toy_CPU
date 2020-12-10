@@ -26,7 +26,7 @@ module id_ex(
 );
 
     always @ (posedge clk) begin
-        if (rst || jump_flag) begin
+        if (rst) begin
             r1_o <= `Zero;
             r2_o <= `Zero;
             imm_o <= `Zero;
@@ -36,7 +36,8 @@ module id_ex(
             alusel_o <= `Zero;
             pc_o <= `Zero;
         end else if (stall_signal[3]) begin
-        end else if (stall_signal[2]) begin
+
+        end else if (stall_signal[2] || jump_flag) begin
             r1_o <= `Zero;
             r2_o <= `Zero;
             imm_o <= `Zero;

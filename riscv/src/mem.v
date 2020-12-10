@@ -13,6 +13,7 @@ module mem(
     input wire [31 : 0] mem_addr_i,
     input wire ram_done_i,
     input wire [31 : 0] ram_r_data_i,
+    output reg [3 : 0] buffer_pointer_o,
 
     output reg ram_r_req_o,
     output reg ram_w_req_o,
@@ -31,7 +32,7 @@ always @ (*) begin
         ram_w_req_o     = `False;
         ram_w_data_o    = `Zero;
         ram_addr_o      = `Zero;
-        // ram_state       = 2'h0;
+        buffer_pointer_o = 3'h0;
         mem_stall       = `False;
     end else begin
         rd_addr_o = rd_addr_i;
@@ -42,7 +43,7 @@ always @ (*) begin
                 ram_w_req_o     = `False;
                 ram_w_data_o    = `Zero;
                 ram_addr_o      = `Zero;
-                // ram_state       = 2'h0;
+                buffer_pointer_o = 3'h0;
                 mem_stall       = `False;
                 rd_data_o       = rd_data_i;
             end
@@ -97,7 +98,7 @@ always @ (*) begin
                 ram_addr_o      = mem_addr_i;
                 ram_w_data_o    = rd_data_i[7 : 0];
                 rd_data_o       = rd_data_i;
-                // ram_state       = 2'b00;
+                buffer_pointer_o  = 3'h3;
                 mem_stall       = !ram_done_i;
             end
             `EX_SH: begin
@@ -106,7 +107,7 @@ always @ (*) begin
                 ram_addr_o      = mem_addr_i;
                 ram_w_data_o    = rd_data_i[15 : 0];
                 rd_data_o       = rd_data_i;
-                // ram_state       = 2'b01;
+                buffer_pointer_o  = 3'h2;
                 mem_stall       = !ram_done_i;
             end
             `EX_SW: begin
@@ -115,7 +116,7 @@ always @ (*) begin
                 ram_addr_o      = mem_addr_i;
                 ram_w_data_o    = rd_data_i[31 : 0];
                 rd_data_o       = rd_data_i;
-                // ram_state       = 2'b11;
+                buffer_pointer_o  = 3'h0;
                 mem_stall       = !ram_done_i;
             end
             default: begin
@@ -124,7 +125,7 @@ always @ (*) begin
                 ram_w_data_o    = `Zero;
                 ram_addr_o      = `Zero;
                 rd_data_o       = `Zero;
-                // ram_state       = 2'b0;
+                buffer_pointer_o = 3'h0;
                 mem_stall       = `False;
             end
         endcase

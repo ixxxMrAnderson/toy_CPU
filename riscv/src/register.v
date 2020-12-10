@@ -24,7 +24,7 @@ module register(
             for (i = 0; i < 32; i = i + 1)
                 regs[i] = `Zero;
         end else if (write_enable) begin
-            if (write_addr != 5'b00000) //not zero register
+            if (write_addr) //not zero register
                 regs[write_addr] <= write_data;
         end
     end
