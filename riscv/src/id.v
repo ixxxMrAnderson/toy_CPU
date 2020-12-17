@@ -4,7 +4,6 @@ module id(
     input wire [31 : 0] inst,
     input wire [31 : 0] r1_data_i,
     input wire [31 : 0] r2_data_i,
-    input wire [31 : 0] without_prediction_i,
 
     input wire ld_flag,
     input wire ex_wb_flag,
@@ -30,7 +29,6 @@ module id(
     output reg rd_enable,
     output reg [4 : 0] aluop,
     output reg [2 : 0] alusel,
-    output reg [31 : 0] without_prediction_o,
 
     output wire id_stall
 );
@@ -55,7 +53,6 @@ module id(
         alusel = `EX_RES_NOP;
         use_imm_instead = 1'b0;
         pc_o = pc_i;
-        without_prediction_o = without_prediction_i;
         case (opcode)
             `EXE: begin
                 case (func7)   

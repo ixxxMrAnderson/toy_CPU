@@ -9,16 +9,19 @@ module ex(
     input wire [`OpCodeLen - 1 : 0] aluop,
     input wire [`OpSelLen - 1 : 0] alusel,
     input wire [31 : 0] pc,
-    input wire [31 : 0] predicted_pc,
+    input wire [31 : 0] id_pc,
+    input wire [31 : 0] if_pc,
 
     output reg [`OpCodeLen - 1 : 0] aluop_o,
     output reg [4 : 0] rd_addr_o,
     output reg [31 : 0] mem_addr_o,
     output reg rd_enable_o,
     output reg [31 : 0] output_,
-    output reg [31 : 0] branch_to,
     output reg jump_flag,
     output reg branch_taken,
+    output reg branch_flag,
+    output reg [31 : 0] branch_pc,
+    output reg [31 : 0] branch_to,
 
     output reg ld_flag
     );
@@ -26,24 +29,40 @@ module ex(
     reg [31 : 0] arith_out;
     reg [31 : 0] logic_out;
     reg [31 : 0] shift_out;
+    reg [31 : 0] predicted_pc;
     wire [31 : 0] jalr_to = r1 + imm;
+
+
+    always @ (*) begin
+        if (id_pc) begin
+            predicted_pc = id_pc;
+        end else if (if_pc) begin
+            predicted_pc = if_pc;
+        end else begin
+            predicted_pc = `Zero;
+        end
+    end
 
     always @ (*) begin
         if (!rst) begin
             rd_enable_o = (rd_enable && rd) ? 1'b1 : 1'b0;
             rd_addr_o = rd;
+            branch_pc = pc;
             case (aluop)
                 `EX_JAL: begin
+                    branch_flag = `True;
                     branch_to  = pc + imm;
-                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
+                    jump_flag = predicted_pc == branch_to ? `False : `True;
                     branch_taken = `True;
                 end
                 `EX_JALR: begin
+                    branch_flag = `True;
                     branch_to  = {jalr_to[31:1], 1'b0};
-                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
+                    jump_flag = predicted_pc == branch_to ? `False : `True;
                     branch_taken = `True;
                 end
                 `EX_BEQ: begin
+                    branch_flag = `True;
                     if (r1 == r2) begin
                         branch_to  = pc + imm;
                         branch_taken = `True;
@@ -51,9 +70,10 @@ module ex(
                         branch_to  = pc + 4;
                         branch_taken = `False;
                     end
-                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
+                    jump_flag = predicted_pc == branch_to ? `False : `True;
                 end
                 `EX_BNE: begin
+                    branch_flag = `True;
                     if (r1 != r2) begin
                         branch_to  = pc + imm;
                         branch_taken = `True;
@@ -61,9 +81,10 @@ module ex(
                         branch_to  = pc + 4;
                         branch_taken = `False;
                     end
-                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
+                    jump_flag = predicted_pc == branch_to ? `False : `True;
                 end
                 `EX_BLT: begin
+                    branch_flag = `True;
                     if ($signed(r1) < $signed(r2)) begin
                         branch_to = pc + imm;
                         branch_taken = `True;
@@ -71,9 +92,10 @@ module ex(
                         branch_to = pc + 4;
                         branch_taken = `False;
                     end
-                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
+                    jump_flag = predicted_pc == branch_to ? `False : `True;
                 end
                 `EX_BGE: begin
+                    branch_flag = `True;
                     if ($signed(r1) >= $signed(r2)) begin
                         branch_to = pc + imm;
                         branch_taken = `True;
@@ -81,9 +103,10 @@ module ex(
                         branch_to = pc + 4;
                         branch_taken = `False;
                     end
-                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
+                    jump_flag = predicted_pc == branch_to ? `False : `True;
                 end
                 `EX_BLTU: begin
+                    branch_flag = `True;
                     if (r1 < r2) begin
                         branch_to = pc + imm;
                         branch_taken = `True;
@@ -91,9 +114,10 @@ module ex(
                         branch_to = pc + 4;
                         branch_taken = `False;
                     end
-                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
+                    jump_flag = predicted_pc == branch_to ? `False : `True;
                 end
                 `EX_BGEU: begin
+                    branch_flag = `True;
                     if (r1 >= r2) begin
                         branch_to = pc + imm;
                         branch_taken = `True;
@@ -101,9 +125,10 @@ module ex(
                         branch_to = pc + 4;
                         branch_taken = `False;
                     end
-                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
+                    jump_flag = predicted_pc == branch_to ? `False : `True;
                 end
                 default: begin
+                    branch_flag = `False;
                     jump_flag = `False;
                     branch_taken = `False;
                 end
