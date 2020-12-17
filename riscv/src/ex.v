@@ -9,6 +9,7 @@ module ex(
     input wire [`OpCodeLen - 1 : 0] aluop,
     input wire [`OpSelLen - 1 : 0] alusel,
     input wire [31 : 0] pc,
+    input wire [31 : 0] predicted_pc,
 
     output reg [`OpCodeLen - 1 : 0] aluop_o,
     output reg [4 : 0] rd_addr_o,
@@ -17,6 +18,7 @@ module ex(
     output reg [31 : 0] output_,
     output reg [31 : 0] branch_to,
     output reg jump_flag,
+    output reg branch_taken,
 
     output reg ld_flag
     );
@@ -30,65 +32,80 @@ module ex(
         if (!rst) begin
             rd_enable_o = (rd_enable && rd) ? 1'b1 : 1'b0;
             rd_addr_o = rd;
-            jump_flag = `False;
             case (aluop)
                 `EX_JAL: begin
-                    jump_flag = `True;
                     branch_to  = pc + imm;
+                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
+                    branch_taken = `True;
                 end
                 `EX_JALR: begin
-                    jump_flag = `True;
                     branch_to  = {jalr_to[31:1], 1'b0};
+                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
+                    branch_taken = `True;
                 end
                 `EX_BEQ: begin
                     if (r1 == r2) begin
-                        jump_flag = `True;
                         branch_to  = pc + imm;
+                        branch_taken = `True;
                     end else begin
                         branch_to  = pc + 4;
+                        branch_taken = `False;
                     end
+                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
                 end
                 `EX_BNE: begin
                     if (r1 != r2) begin
-                        jump_flag = `True;
                         branch_to  = pc + imm;
+                        branch_taken = `True;
                     end else begin
                         branch_to  = pc + 4;
+                        branch_taken = `False;
                     end
+                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
                 end
                 `EX_BLT: begin
                     if ($signed(r1) < $signed(r2)) begin
-                        jump_flag = `True;
                         branch_to = pc + imm;
+                        branch_taken = `True;
                     end else begin
                         branch_to = pc + 4;
+                        branch_taken = `False;
                     end
+                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
                 end
                 `EX_BGE: begin
                     if ($signed(r1) >= $signed(r2)) begin
-                        jump_flag = `True;
                         branch_to = pc + imm;
+                        branch_taken = `True;
                     end else begin
                         branch_to = pc + 4;
+                        branch_taken = `False;
                     end
+                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
                 end
                 `EX_BLTU: begin
                     if (r1 < r2) begin
-                        jump_flag = `True;
                         branch_to = pc + imm;
+                        branch_taken = `True;
                     end else begin
                         branch_to = pc + 4;
+                        branch_taken = `False;
                     end
+                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
                 end
                 `EX_BGEU: begin
                     if (r1 >= r2) begin
-                        jump_flag = `True;
                         branch_to = pc + imm;
+                        branch_taken = `True;
                     end else begin
                         branch_to = pc + 4;
+                        branch_taken = `False;
                     end
+                    jump_flag = predicted_pc + 4 == branch_to ? `False : `True;
                 end
                 default: begin
+                    jump_flag = `False;
+                    branch_taken = `False;
                 end
             endcase
         end

@@ -32,7 +32,7 @@ module register(
     //read 1
     always @ (*) begin
         if (!rst && read_enable1) begin
-            if (read_addr1 == 5'b00000) 
+            if (read_addr1 == `ZeroReg) 
                 read_data1 = `Zero;
             else if (read_addr1 == write_addr && write_enable)
                 read_data1 = write_data;
@@ -46,7 +46,7 @@ module register(
     //read 2
     always @ (*) begin
         if (!rst && read_enable2) begin
-            if (read_addr2 == 5'b00000) 
+            if (read_addr2 == `ZeroReg) 
                 read_data2 = `Zero;
             else if (read_addr2 == write_addr && write_enable)
                 read_data2 = write_data;

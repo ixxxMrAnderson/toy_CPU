@@ -95,14 +95,14 @@ end
 
 endmodule
 
-//expr
+//expr`
 //basicopt1
 //lvalue2
 //gcd
 //bulgarian
 //hanoi
 //heart
-//magic
+//magic`
 //multiarray
 //manyarguments
 //pi

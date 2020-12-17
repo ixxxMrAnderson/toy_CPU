@@ -20,21 +20,13 @@
 
 `define Zero 32'h00000000
 `define ZeroReg 5'b00000
+`define ZeroByte 8'b00000000
 `define True 1'b1
 `define False 1'b0
 `define Write 2'b01
 `define Read 2'b00
 `define Vacant 2'b10
 `define IF 2'b11
-
-`define InstLen 32
-`define AddrLen 32
-`define RegAddrLen 5
-`define RegLen 32
-`define RegNum 32
-`define MemAddrLen 32
-`define RamLen 8
-`define StallSignalLen 5
 
 `define WriteEnable 1'b1
 `define WriteDisable 1'b0
@@ -97,5 +89,3 @@
 `define EX_RES_ARITH    3'b011
 `define EX_RES_JAL      3'b100
 `define EX_RES_LD_ST    3'b101
-
-`define DCacheSize 128

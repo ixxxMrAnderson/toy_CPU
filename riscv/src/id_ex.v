@@ -13,6 +13,8 @@ module id_ex(
 
     input wire [31 : 0] pc_i,
     output reg [31 : 0] pc_o,
+    input wire [31 : 0] without_prediction_i,
+    output reg [31 : 0] without_prediction_o,
 
     output reg [31 : 0] r1_o,
     output reg [31 : 0] r2_o,
@@ -22,7 +24,7 @@ module id_ex(
     output reg [`OpCodeLen - 1 : 0] aluop_o,
     output reg [`OpSelLen - 1 : 0] alusel_o,
 
-    input wire [`StallSignalLen - 1 : 0] stall_signal
+    input wire [4 : 0] stall_signal
 );
 
     always @ (posedge clk) begin
@@ -35,6 +37,7 @@ module id_ex(
             aluop_o <= `Zero;
             alusel_o <= `Zero;
             pc_o <= `Zero;
+            without_prediction_o <= `Zero;
         end else if (stall_signal[3]) begin
 
         end else if (stall_signal[2] || jump_flag) begin
@@ -46,6 +49,7 @@ module id_ex(
             aluop_o <= `Zero;
             alusel_o <= `Zero;
             pc_o <= `Zero;
+            without_prediction_o <= `Zero;
         end else begin
             r1_o <= r1_i;
             r2_o <= r2_i;
@@ -55,6 +59,7 @@ module id_ex(
             aluop_o <= aluop_i;
             alusel_o <= alusel_i;
             pc_o <= pc_i;
+            without_prediction_o <= without_prediction_i;
         end
     end
 

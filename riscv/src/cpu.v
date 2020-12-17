@@ -31,16 +31,19 @@ assign rst_in_ = rst_in | ~rdy_in ;
 
 //pc_reg >> if
 wire [31 : 0] if_pc_i;
+wire [31 : 0] if_without_prediction_i;
 
 wire [31 : 0] branch_to;
 wire jump_flag;
 
 //if >> if_id
 wire [31 : 0] if_pc_o;
+wire [31 : 0] if_without_prediction_o;
 wire [31 : 0] if_inst_o;
 
 //if_id >> id
 wire [31 : 0] id_pc_i;
+wire [31 : 0] id_without_prediction_i;
 wire [31 : 0] id_inst_i;
 
 //id <--> register
@@ -61,6 +64,7 @@ wire id_rd_enable_o;
 wire [4 : 0] id_aluop_o;
 wire [2 : 0] id_alusel_o;
 wire [31 : 0] id_pc_o;
+wire [31 : 0] id_without_prediction_o;
 
 //id_ex >> ex
 wire [31 : 0] ex_r1_i;
@@ -71,6 +75,7 @@ wire ex_rd_enable_i;
 wire [4 : 0] ex_aluop_i;
 wire [2 : 0] ex_alusel_i;
 wire [31 : 0] ex_pc_i;
+wire [31 : 0] ex_without_prediction_i;
 
 //ex >> ex_mem
 wire [4 : 0] ex_aluop_o;
@@ -122,31 +127,31 @@ assign dbgreg_dout = wb_enable ? wb_data : `Zero;
 
 pc_reg pc_reg_unit(
   .clk(clk_in), .rst(rst_in_), .jump_flag(jump_flag), .branch_to(branch_to),
-  .pc(if_pc_i), .stall_signal(stall_signal)
+  .pc(if_without_prediction_i), .predicted_pc(if_pc_i), .stall_signal(stall_signal)
 );
 
 if_ if_unit(
   .clk(clk_in), .rst(rst_in_),
-  .pc_i(if_pc_i), .inst_i(if_inst_i), 
+  .pc_i(if_pc_i), .inst_i(if_inst_i), .without_prediction_i(if_without_prediction_i),
   .inst_req(inst_req), .inst_addr_o(inst_addr_o),
-  .inst_o(if_inst_o), .pc_o(if_pc_o), .inst_done(inst_done), .inst_pc(inst_pc),
+  .inst_o(if_inst_o), .pc_o(if_pc_o), .without_prediction_o(if_without_prediction_o), .inst_done(inst_done), .inst_pc(inst_pc),
   .if_stall(if_stall_o)
 );
 
 if_id if_id_unit(
   .clk(clk_in), .rst(rst_in_),
-  .pc_i(if_pc_o), .inst_i(if_inst_o),
-  .pc_o(id_pc_i), .inst_o(id_inst_i),
+  .pc_i(if_pc_o), .inst_i(if_inst_o), .without_prediction_i(if_without_prediction_o),
+  .pc_o(id_pc_i), .inst_o(id_inst_i), .without_prediction_o(id_without_prediction_i),
   .stall_signal(stall_signal), .jump_flag(jump_flag)
 );
 
 id id_unit(
   .rst(rst_in_),
-  .pc_i(id_pc_i), .inst(id_inst_i),
+  .pc_i(id_pc_i), .inst(id_inst_i), .without_prediction_i(id_without_prediction_i),
   .r1_data_i(id_r1_data_i), .r2_data_i(id_r2_data_i),
   .ld_flag(ex_ld_flag_o), .ex_wb_flag(ex_rd_enable_o), .ex_wb_addr(ex_rd_addr_o), .ex_forward(ex_output_o),
   .mem_wb_flag(mem_rd_enable_o), .mem_wb_addr(mem_rd_addr_o), .mem_forward(mem_rd_data_o),
-  .r1_addr(id_r1_addr_o), .r1_read_enable(id_r1_enable_o), .r2_addr(id_r2_addr_o), .r2_read_enable(id_r2_enable_o), .pc_o(id_pc_o),
+  .r1_addr(id_r1_addr_o), .r1_read_enable(id_r1_enable_o), .r2_addr(id_r2_addr_o), .r2_read_enable(id_r2_enable_o), .pc_o(id_pc_o), .without_prediction_o(id_without_prediction_o),
   .r1(id_r1_o), .r2(id_r2_o), .imm(id_imm_o), .rd(id_rd_o), .rd_enable(id_rd_enable_o), .aluop(id_aluop_o), .alusel(id_alusel_o),
   .id_stall(id_stall_o)
 );
@@ -161,7 +166,7 @@ register register_unit(
 id_ex id_ex_unit(
   .clk(clk_in), .rst(rst_in_),
   .r1_i(id_r1_o), .r2_i(id_r2_o), .imm_i(id_imm_o), .rd_i(id_rd_o), .rd_enable_i(id_rd_enable_o), .aluop_i(id_aluop_o), .alusel_i(id_alusel_o),
-  .pc_i(id_pc_o), .pc_o(ex_pc_i), 
+  .pc_i(id_pc_o), .pc_o(ex_pc_i), .without_prediction_i(id_without_prediction_o), .without_prediction_o(ex_without_prediction_i), 
   .r1_o(ex_r1_i), .r2_o(ex_r2_i), .imm_o(ex_imm_i), .rd_o(ex_rd_i), .rd_enable_o(ex_rd_enable_i), .aluop_o(ex_aluop_i), .alusel_o(ex_alusel_i),
   .stall_signal(stall_signal), .jump_flag(jump_flag)
 );
@@ -169,7 +174,7 @@ id_ex id_ex_unit(
 ex ex_unit(
   .rst(rst_in_),
   .r1(ex_r1_i), .r2(ex_r2_i), .imm(ex_imm_i), .rd(ex_rd_i), .rd_enable(ex_rd_enable_i), 
-  .aluop(ex_aluop_i), .alusel(ex_alusel_i), .pc(ex_pc_i),
+  .aluop(ex_aluop_i), .alusel(ex_alusel_i), .pc(ex_without_prediction_i), .predicted_pc(ex_pc_i),
   .aluop_o(ex_aluop_o), .rd_addr_o(ex_rd_addr_o), .mem_addr_o(ex_mem_addr_o), .rd_enable_o(ex_rd_enable_o), 
   .branch_to(branch_to), .jump_flag(jump_flag),
   .output_(ex_output_o), .ld_flag(ex_ld_flag_o)
