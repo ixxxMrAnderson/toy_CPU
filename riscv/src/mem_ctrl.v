@@ -70,27 +70,27 @@ module mem_ctrl(
 			end
 		end else if (ram_state == `Write && ram_w_req) begin
 			inst_done_o <= `False;
-			if (ram_addr_i[16 : 9] == 8'hff) begin
+			if (ram_addr_i[16 : 7] == 10'h3ff) begin
 				ram_done_o <= `True;
 				ram_state <= `Vacant;
 				case (buffer_pointer)
 					3'h0: begin
-						dcache[ram_addr_i[8 : 0]] <= ram_w_data_i[7 : 0];
-						dcache[ram_addr_i[8 : 0] + 1] <= ram_w_data_i[15 : 8];
-						dcache[ram_addr_i[8 : 0] + 2] <= ram_w_data_i[23 : 16];
-						dcache[ram_addr_i[8 : 0] + 3] <= ram_w_data_i[31 : 24];
+						dcache[ram_addr_i[6 : 0]] <= ram_w_data_i[7 : 0];
+						dcache[ram_addr_i[6 : 0] + 1] <= ram_w_data_i[15 : 8];
+						dcache[ram_addr_i[6 : 0] + 2] <= ram_w_data_i[23 : 16];
+						dcache[ram_addr_i[6 : 0] + 3] <= ram_w_data_i[31 : 24];
 					end
 					3'h2: begin
-						dcache[ram_addr_i[8 : 0]] <= ram_w_data_i[7 : 0];
-						dcache[ram_addr_i[8 : 0] + 1] <= ram_w_data_i[15 : 8];
-						dcache[ram_addr_i[8 : 0] + 2] <= `ZeroByte;
-						dcache[ram_addr_i[8 : 0] + 3] <= `ZeroByte;
+						dcache[ram_addr_i[6 : 0]] <= ram_w_data_i[7 : 0];
+						dcache[ram_addr_i[6 : 0] + 1] <= ram_w_data_i[15 : 8];
+						dcache[ram_addr_i[6 : 0] + 2] <= `ZeroByte;
+						dcache[ram_addr_i[6 : 0] + 3] <= `ZeroByte;
 					end
 					3'h3: begin
-						dcache[ram_addr_i[8 : 0]] <= ram_w_data_i[7 : 0];
-						dcache[ram_addr_i[8 : 0] + 1] <= `ZeroByte;
-						dcache[ram_addr_i[8 : 0] + 2] <= `ZeroByte;
-						dcache[ram_addr_i[8 : 0] + 3] <= `ZeroByte;
+						dcache[ram_addr_i[6 : 0]] <= ram_w_data_i[7 : 0];
+						dcache[ram_addr_i[6 : 0] + 1] <= `ZeroByte;
+						dcache[ram_addr_i[6 : 0] + 2] <= `ZeroByte;
+						dcache[ram_addr_i[6 : 0] + 3] <= `ZeroByte;
 					end 
 				endcase
 			end else begin
@@ -126,13 +126,13 @@ module mem_ctrl(
 			end
 		end else if (ram_state == `Read && ram_r_req) begin
 			inst_done_o <= `False;
-			if (ram_addr_i[16 : 9] == 8'hff) begin
+			if (ram_addr_i[16 : 7] == 10'h3ff) begin
 				ram_done_o <= `True;
 				ram_state <= `Vacant;
-				ram_r_data_o[7 : 0] <= dcache[ram_addr_i[8 : 0]];
-				ram_r_data_o[15 : 8] <= dcache[ram_addr_i[8 : 0] + 1];
-				ram_r_data_o[23 : 16] <= dcache[ram_addr_i[8 : 0] + 2];
-				ram_r_data_o[31 : 24] <= dcache[ram_addr_i[8 : 0] + 3];
+				ram_r_data_o[7 : 0] <= dcache[ram_addr_i[6 : 0]];
+				ram_r_data_o[15 : 8] <= dcache[ram_addr_i[6 : 0] + 1];
+				ram_r_data_o[23 : 16] <= dcache[ram_addr_i[6 : 0] + 2];
+				ram_r_data_o[31 : 24] <= dcache[ram_addr_i[6 : 0] + 3];
 			end else begin
 				ram_done_o <= `False;
 				case (buffer_pointer)
