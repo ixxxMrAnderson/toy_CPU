@@ -209,7 +209,7 @@ module cpu(
   );
 
   stall stall_unit(
-    .if_stall(if_stall_o), .id_stall(id_stall_o), .mem_stall(mem_stall_o),
+    .rst(rst_in_), .if_stall(if_stall_o), .id_stall(id_stall_o), .mem_stall(mem_stall_o),
     .stall_signal(stall_signal)
   );
 

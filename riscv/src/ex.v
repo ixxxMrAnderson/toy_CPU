@@ -150,8 +150,6 @@ module ex(
                     arith_out = r1 < r2;
                 `EX_SLT: 
                     arith_out = $signed(r1) < $signed(r2);
-                `EX_SLTU :
-                    arith_out = r1 < r2;
                 `EX_AUIPC: 
                     arith_out = pc + imm;
                 default: 
