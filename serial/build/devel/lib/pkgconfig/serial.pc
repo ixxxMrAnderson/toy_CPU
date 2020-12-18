@@ -1,0 +1,8 @@
+prefix=/home/cht152/Documents/verilog_file/MS108-2020-master/toy_CPU/toy_CPU/serial/build/devel
+
+Name: serial
+Description: Description of serial
+Version: 1.2.1
+Cflags: -I/home/cht152/Documents/verilog_file/MS108-2020-master/toy_CPU/toy_CPU/serial/include
+Libs: -L/home/cht152/Documents/verilog_file/MS108-2020-master/toy_CPU/toy_CPU/serial/build/devel/lib -lserial -lrt -lpthread
+Requires: 
