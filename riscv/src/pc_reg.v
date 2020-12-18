@@ -1,3 +1,4 @@
+`include "config.v"
 module pc_reg(
 	input wire clk,
 	input wire rst,
@@ -35,7 +36,7 @@ module pc_reg(
 	end
 
 	always @ (posedge clk) begin
-	    if (branch_flag) begin
+	    if (branch_flag && !rst) begin
 	    	BTB[branch_pc[8 : 2]] <= branch_to;
 	    	BHT[branch_pc[8 : 2]][10 : 2] <= branch_pc[17 : 9];
 	    	if (branch_taken && BHT[pc[8 : 2]][1 : 0] < 3) begin

@@ -1,3 +1,4 @@
+`include "config.v"
 module stall(
 	input wire rst, 
 	input wire if_stall,
@@ -8,7 +9,7 @@ module stall(
 );
 
 	always @ (*) begin
-		if (rst == `True) begin
+		if (rst) begin
 			stall_signal = 5'b11111;
 		end else if (mem_stall) begin
 			stall_signal = 5'b11111;

@@ -1,3 +1,4 @@
+`include "config.v"
 module register(
     input wire clk,
     input wire rst,
@@ -13,7 +14,7 @@ module register(
     input wire read_enable2,   
     input wire [4 : 0] read_addr2,
     output reg [31 : 0] read_data2
-    );
+);
     
     reg[31 : 0] regs[31 : 0];
     integer i;

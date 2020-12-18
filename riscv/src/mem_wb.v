@@ -1,3 +1,4 @@
+`include "config.v"
 module mem_wb(
     input clk,
     input rst,

@@ -90,22 +90,8 @@ initial begin
   for (i=0;i<2**ADDR_WIDTH;i=i+1) begin
     ram[i] = 0;
   end
-  $readmemh("/home/cht152/Documents/verilog_file/total/magic/test.data", ram); // add test.data to vivado project or specify a valid file path
+  $readmemh("test.data", ram); // add test.data to vivado project or specify a valid file path
 end
 
 endmodule
 
-//expr
-//basicopt1`
-//lvalue2
-//gcd
-//bulgarian
-//hanoi
-//heart
-//magic
-//multiarray
-//manyarguments
-//pi
-//qsort
-//queens
-//uartboom

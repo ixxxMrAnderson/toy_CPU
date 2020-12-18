@@ -1,22 +1,4 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Engineer: Gabriel
-// 
-// Create Date: 10/24/2019 11:41:47 PM
-// Design Name: 
-// Module Name: config
-// Project Name: 
-// Target Devices: 
-// Tool Versions: 
-// Description: 
-// 
-// Dependencies: 
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-//////////////////////////////////////////////////////////////////////////////////
 
 `define Zero 32'h00000000
 `define ZeroReg 5'b00000

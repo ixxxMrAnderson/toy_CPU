@@ -1,3 +1,4 @@
+`include "config.v"
 module ex(
     input wire rst,
 
@@ -24,7 +25,7 @@ module ex(
     output reg [31 : 0] branch_to,
 
     output reg ld_flag
-    );
+);
 
     reg [31 : 0] arith_out;
     reg [31 : 0] logic_out;

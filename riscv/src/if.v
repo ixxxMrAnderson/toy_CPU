@@ -1,3 +1,4 @@
+`include "config.v"
 module if_(
 	input wire clk,
 	input wire rst,

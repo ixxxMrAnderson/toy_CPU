@@ -1,3 +1,4 @@
+`include "config.v"
 module mem_ctrl(
 	input wire clk,
 	input wire rst,
@@ -22,7 +23,7 @@ module mem_ctrl(
 	output reg mem_wr
 );
 
-	reg [7 : 0] dcache [511 : 0]; 
+	reg [7 : 0] dcache [127 : 0]; 
 	reg [31 : 0] data_buffer;
 	reg [2 : 0] buffer_pointer;
 	reg [1 : 0] ram_state;
@@ -58,7 +59,7 @@ module mem_ctrl(
 				mem_wr <= `Read;
 				buffer_pointer <= 3'h0;
 				ram_state <= `Read;
-				mem_a <= ram_addr_i;
+				mem_a <= `Zero;
 			end else if (inst_req) begin
 				mem_wr <= `Read;
 				mem_a <= inst_addr_i;

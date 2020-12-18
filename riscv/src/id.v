@@ -1,3 +1,4 @@
+`include "config.v"
 module id(
     input wire rst,
     input wire [31 : 0] pc_i,
