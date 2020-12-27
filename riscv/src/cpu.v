@@ -36,6 +36,7 @@ module cpu(
   wire branch_taken;
   wire [31 : 0] branch_pc;
   wire [31 : 0] branch_to;
+  wire branch_flag;
 
   //if >> if_id
   wire [31 : 0] if_pc_o;
@@ -122,7 +123,7 @@ module cpu(
 
   pc_reg pc_reg_unit(
     .clk(clk_in), .rst(rst_in_), .jump_flag(jump_flag), .branch_to(branch_to), .branch_taken(branch_taken), .branch_pc(branch_pc),
-    .pc(if_pc_i), .stall_signal(stall_signal)
+    .pc(if_pc_i), .stall_signal(stall_signal), .branch_flag(branch_flag)
   );
 
   if_ if_unit(
@@ -172,7 +173,7 @@ module cpu(
     .aluop(ex_aluop_i), .alusel(ex_alusel_i), .pc(ex_pc_i), .if_pc(if_pc_o), .id_pc(id_pc_o),
     .aluop_o(ex_aluop_o), .rd_addr_o(ex_rd_addr_o), .mem_addr_o(ex_mem_addr_o), .rd_enable_o(ex_rd_enable_o), 
     .branch_to(branch_to), .jump_flag(jump_flag), .branch_taken(branch_taken), .branch_pc(branch_pc),
-    .output_(ex_output_o), .ld_flag(ex_ld_flag_o)
+    .output_(ex_output_o), .ld_flag(ex_ld_flag_o), .pc_pc(if_pc_i), .branch_flag(branch_flag)
   );
 
   ex_mem ex_mem_unit(

@@ -21,6 +21,7 @@ module pc_reg(
 	    if (rst) begin
 	    	for (i = 0; i < 128; i = i + 1) begin
     			BHT[i][10] <= 1'b1;
+    			BHT[i][1 : 0] <= 2'b01;
     		end
 	        pc <= `Zero;
 	    end else if (jump_flag) begin
@@ -39,10 +40,10 @@ module pc_reg(
 	    if (branch_flag && !rst) begin
 	    	BTB[branch_pc[8 : 2]] <= branch_to;
 	    	BHT[branch_pc[8 : 2]][10 : 2] <= branch_pc[17 : 9];
-	    	if (branch_taken && BHT[pc[8 : 2]][1 : 0] < 3) begin
-	    		BHT[pc[8 : 2]][1 : 0] <= BHT[pc[8 : 2]][1 : 0] + 1;
-	    	end else if (BHT[pc[8 : 2]][1 : 0] > 0) begin
-	    		BHT[pc[8 : 2]][1 : 0] <= BHT[pc[8 : 2]][1 : 0] - 1;
+	    	if (branch_taken && BHT[branch_pc[8 : 2]][1 : 0] != 2'b11) begin
+	    		BHT[branch_pc[8 : 2]][1 : 0] <= BHT[branch_pc[8 : 2]][1 : 0] + 1;
+	    	end else if (!branch_taken && BHT[branch_pc[8 : 2]][1 : 0] != 2'b00) begin
+	    		BHT[branch_pc[8 : 2]][1 : 0] <= BHT[branch_pc[8 : 2]][1 : 0] - 1;
 	    	end
 	    end
 	end

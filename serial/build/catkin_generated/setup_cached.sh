@@ -6,8 +6,8 @@
 
 # new environment variables
 export CMAKE_PREFIX_PATH="/home/cht152/Documents/verilog_file/MS108-2020-master/toy_CPU/toy_CPU/serial/build/devel"
-export LD_LIBRARY_PATH=""
-export PKG_CONFIG_PATH=""
+export LD_LIBRARY_PATH="/home/cht152/Documents/verilog_file/MS108-2020-master/toy_CPU/toy_CPU/serial/build/devel/lib"
+export PKG_CONFIG_PATH="/home/cht152/Documents/verilog_file/MS108-2020-master/toy_CPU/toy_CPU/serial/build/devel/lib/pkgconfig"
 export PYTHONPATH=""
 
 # modified environment variables

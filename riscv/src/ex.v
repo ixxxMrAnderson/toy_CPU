@@ -12,6 +12,7 @@ module ex(
     input wire [31 : 0] pc,
     input wire [31 : 0] id_pc,
     input wire [31 : 0] if_pc,
+    input wire [31 : 0] pc_pc,
 
     output reg [`OpCodeLen - 1 : 0] aluop_o,
     output reg [4 : 0] rd_addr_o,
@@ -39,6 +40,8 @@ module ex(
             predicted_pc = id_pc;
         end else if (if_pc) begin
             predicted_pc = if_pc;
+        end else if (pc_pc) begin
+            predicted_pc = pc_pc;
         end else begin
             predicted_pc = `Zero;
         end
