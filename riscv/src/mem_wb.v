@@ -2,6 +2,7 @@
 module mem_wb(
     input clk,
     input rst,
+    
     input wire [31 : 0] rd_data_i,
     input wire [4 : 0] rd_addr_i,
     input wire rd_enable_i,

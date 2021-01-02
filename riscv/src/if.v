@@ -3,12 +3,12 @@ module if_(
 	input wire clk,
 	input wire rst,
 
-	input wire [31 : 0] pc_i, //pc_reg
+	input wire [31 : 0] pc_i, 
 
-	output reg [31 : 0] inst_o, //if_id
+	output reg [31 : 0] inst_o,
 	output reg [31 : 0] pc_o,
 	
-	input wire [31 : 0] inst_i, //mem_ctrl
+	input wire [31 : 0] inst_i, 
 	input wire [31 : 0] inst_pc,
 	input wire inst_done,
 	output wire inst_req,
@@ -18,8 +18,6 @@ module if_(
 );
 	
 	reg [40 : 0] icache [127 : 0]; 
-	assign inst_req = icache[inst_addr_o[8 : 2]][40 : 32] != inst_addr_o[17 : 9] && !inst_done;
-
 	integer i;
 
 	always @ (posedge clk) begin
@@ -37,6 +35,8 @@ module if_(
 	        end
 	    end
 	end
+
+	assign inst_req = icache[inst_addr_o[8 : 2]][40 : 32] != inst_addr_o[17 : 9] && !inst_done;
 
 	always @(*) begin
 		if (rst) begin

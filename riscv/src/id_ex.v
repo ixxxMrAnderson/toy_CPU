@@ -2,6 +2,7 @@
 module id_ex(
     input wire clk,
     input wire rst,
+
     input wire [31 : 0] r1_i,
     input wire [31 : 0] r2_i,
     input wire [31 : 0] imm_i,
@@ -9,12 +10,11 @@ module id_ex(
     input wire rd_enable_i,
     input wire [`OpCodeLen - 1 : 0] aluop_i,
     input wire [`OpSelLen - 1 : 0] alusel_i,
+    input wire [31 : 0] pc_i,
 
     input wire jump_flag,
 
-    input wire [31 : 0] pc_i,
     output reg [31 : 0] pc_o,
-
     output reg [31 : 0] r1_o,
     output reg [31 : 0] r2_o,
     output reg [31 : 0] imm_o,

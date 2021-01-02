@@ -20,7 +20,9 @@ module mem_ctrl(
 	input wire [7 : 0] mem_din,
 	output reg [7 : 0] mem_dout,
 	output reg [31 : 0] mem_a,
-	output reg mem_wr
+	output reg mem_wr,
+	
+	input wire io_buffer_full
 );
 
 	reg [7 : 0] dcache [127 : 0]; 
@@ -30,7 +32,9 @@ module mem_ctrl(
 	reg [31 : 0] cur_ram_addr;
 
 	always @(posedge clk) begin
-		if (rst) begin
+		if (io_buffer_full) begin
+
+		end else if (rst) begin
 			inst_o <= `Zero;
 			inst_done_o <= `False;
 			ram_r_data_o <= `Zero;
@@ -45,8 +49,7 @@ module mem_ctrl(
 		end else if (ram_state == `Vacant) begin
 			ram_done_o <= `False;
 			inst_done_o <= `False;
-			mem_wr <= `Read;
-			if (ram_w_req) begin
+			if (ram_w_req && !ram_done_o) begin
 				data_buffer <= ram_w_data_i;
 				mem_wr <= `Read;
 				mem_a <= `Zero;
@@ -67,6 +70,7 @@ module mem_ctrl(
 				ram_state <= `IF;
 				cur_ram_addr <= inst_addr_i;
 			end else begin
+				mem_a <= `Zero;
 			end
 		end else if (ram_state == `Write && ram_w_req) begin
 			inst_done_o <= `False;
@@ -95,29 +99,26 @@ module mem_ctrl(
 				endcase
 			end else begin
 				ram_done_o <= `False;
+				mem_wr <= `Write;
 				case (buffer_pointer)
 					3'h0: begin
 						mem_dout <= ram_w_data_i[31 : 24];
 						mem_a <= ram_addr_i + 3;
-						mem_wr <= `Write;
 						buffer_pointer <= 3'h1;
 					end
 					3'h1: begin
 						mem_dout <= ram_w_data_i[23 : 16];
 						mem_a <= ram_addr_i + 2;
-						mem_wr <= `Write;
 						buffer_pointer <= 3'h2;
 					end
 					3'h2: begin
 						mem_dout <= ram_w_data_i[15 : 8];
 						mem_a <= ram_addr_i + 1;
-						mem_wr <= `Write;
 						buffer_pointer <= 3'h3;
 					end
 					3'h3: begin
 						mem_dout <= ram_w_data_i[7 : 0];
 						mem_a <= ram_addr_i;
-						mem_wr <= `Write;
 						buffer_pointer <= 3'h0;
 						ram_done_o <= `True;
 						ram_state <= `Vacant;
@@ -135,27 +136,24 @@ module mem_ctrl(
 				ram_r_data_o[31 : 24] <= dcache[ram_addr_i[6 : 0] + 3];
 			end else begin
 				ram_done_o <= `False;
+				mem_wr <= `Read;
 				case (buffer_pointer)
 					3'h0: begin
 						mem_a <= ram_addr_i;
-						mem_wr <= `Read;
 						buffer_pointer <= 3'h1;
 					end
 					3'h1: begin
 						mem_a <= ram_addr_i + 1;
-						mem_wr <= `Read;
 						buffer_pointer <= 3'h2;
 					end
 					3'h2: begin
 						data_buffer[7 : 0] <= mem_din;
 						mem_a <= ram_addr_i + 2;
-						mem_wr <= `Read;
 						buffer_pointer <= 3'h3;
 					end 
 					3'h3: begin
 						data_buffer[15 : 8] <= mem_din;
 						mem_a <= ram_addr_i + 3;
-						mem_wr <= `Read;
 						buffer_pointer <= 3'h4;
 					end 
 					3'h4: begin
@@ -173,8 +171,8 @@ module mem_ctrl(
 		end else if (ram_state == `IF) begin
 			inst_done_o <= `False;
 			ram_done_o <= `False;
+			mem_wr <= `Read;
 			if (inst_addr_i != cur_ram_addr) begin
-				mem_wr <= `Read;
 				mem_a <= inst_addr_i;
 				buffer_pointer <= 3'h0;
 				cur_ram_addr <= inst_addr_i;
@@ -182,19 +180,16 @@ module mem_ctrl(
 				case (buffer_pointer)
 					3'h0: begin
 						mem_a <= cur_ram_addr + 1;
-						mem_wr <= `Read;
 						buffer_pointer <= 3'h1;
 					end
 					3'h1: begin
 						data_buffer[7 : 0] <= mem_din;
 						mem_a <= cur_ram_addr + 2;
-						mem_wr <= `Read;
 						buffer_pointer <= 3'h2;
 					end
 					3'h2: begin
 						data_buffer[15 : 8] <= mem_din;
 						mem_a <= cur_ram_addr + 3;
-						mem_wr <= `Read;
 						buffer_pointer <= 3'h3;
 					end 
 					3'h3: begin
@@ -203,10 +198,10 @@ module mem_ctrl(
 					end 
 					3'h4: begin
 						inst_o <= {mem_din, data_buffer[23 : 0]};
-						buffer_pointer <= 3'h0;
 						inst_done_o <= `True;
 						inst_pc <= cur_ram_addr;
 						ram_state <= `Vacant;
+						buffer_pointer <= 3'h0;
 					end 
 				endcase
 			end
@@ -214,6 +209,7 @@ module mem_ctrl(
 			ram_done_o <= `False;
 			inst_done_o <= `False;
 			mem_wr <= `Read;
+			mem_a <= `Zero;
 			ram_state <= `Vacant;
 		end
 	end

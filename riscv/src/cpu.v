@@ -27,7 +27,7 @@ module cpu(
 // - 0x30004 read: read clocks passed since cpu starts (in dword, 4 bytes)
 // - 0x30004 write: indicates program stop (will output '\0' through uart tx)
 
-  assign rst_in_ = rst_in | ~rdy_in ;
+  assign rst_in_ = rst_in | ~rdy_in; 
 
   //pc_reg >> if
   wire [31 : 0] if_pc_i;
@@ -37,6 +37,7 @@ module cpu(
   wire [31 : 0] branch_pc;
   wire [31 : 0] branch_to;
   wire branch_flag;
+  wire [31 : 0] BTB_;
 
   //if >> if_id
   wire [31 : 0] if_pc_o;
@@ -123,7 +124,7 @@ module cpu(
 
   pc_reg pc_reg_unit(
     .clk(clk_in), .rst(rst_in_), .jump_flag(jump_flag), .branch_to(branch_to), .branch_taken(branch_taken), .branch_pc(branch_pc),
-    .pc(if_pc_i), .stall_signal(stall_signal), .branch_flag(branch_flag)
+    .pc(if_pc_i), .stall_signal(stall_signal), .branch_flag(branch_flag), .BTB_(BTB_)
   );
 
   if_ if_unit(
@@ -173,7 +174,7 @@ module cpu(
     .aluop(ex_aluop_i), .alusel(ex_alusel_i), .pc(ex_pc_i), .if_pc(if_pc_o), .id_pc(id_pc_o),
     .aluop_o(ex_aluop_o), .rd_addr_o(ex_rd_addr_o), .mem_addr_o(ex_mem_addr_o), .rd_enable_o(ex_rd_enable_o), 
     .branch_to(branch_to), .jump_flag(jump_flag), .branch_taken(branch_taken), .branch_pc(branch_pc),
-    .output_(ex_output_o), .ld_flag(ex_ld_flag_o), .pc_pc(if_pc_i), .branch_flag(branch_flag)
+    .output_(ex_output_o), .ld_flag(ex_ld_flag_o), .pc_pc(if_pc_i), .branch_flag(branch_flag), .BTB_(BTB_)
   );
 
   ex_mem ex_mem_unit(
@@ -198,7 +199,8 @@ module cpu(
     .ram_r_req(mem_ram_r_req_o), .ram_w_req(mem_ram_w_req_o), .ram_addr_i(mem_ram_addr_o), .ram_w_data_i(mem_ram_w_data_o), 
     .ram_r_data_o(mem_ram_r_data_i), .ram_done_o(mem_ram_done_i), 
     .inst_addr_i(inst_addr_o), .inst_req(inst_req), .inst_o(if_inst_i), .inst_done_o(inst_done), .inst_pc(inst_pc),
-    .mem_din(mem_din), .mem_dout(mem_dout), .mem_wr(mem_wr), .mem_a(mem_a), .buffer_pointer_i(buffer_pointer)
+    .mem_din(mem_din), .mem_dout(mem_dout), .mem_wr(mem_wr), .mem_a(mem_a), .buffer_pointer_i(buffer_pointer),
+    .io_buffer_full(io_buffer_full)
   );
 
   mem_wb mem_wb_unit(
@@ -211,7 +213,7 @@ module cpu(
 
   stall stall_unit(
     .if_stall(if_stall_o), .id_stall(id_stall_o), .mem_stall(mem_stall_o),
-    .stall_signal(stall_signal)
+    .stall_signal(stall_signal), .io_buffer_full(io_buffer_full)
   );
 
 endmodule

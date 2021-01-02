@@ -10,6 +10,7 @@ module ex(
     input wire [`OpCodeLen - 1 : 0] aluop,
     input wire [`OpSelLen - 1 : 0] alusel,
     input wire [31 : 0] pc,
+
     input wire [31 : 0] id_pc,
     input wire [31 : 0] if_pc,
     input wire [31 : 0] pc_pc,
@@ -19,12 +20,14 @@ module ex(
     output reg [31 : 0] mem_addr_o,
     output reg rd_enable_o,
     output reg [31 : 0] output_,
+
     output reg jump_flag,
     output reg branch_taken,
     output reg branch_flag,
     output reg [31 : 0] branch_pc,
     output reg [31 : 0] branch_to,
-
+    output reg [31 : 0] BTB_,
+    
     output reg ld_flag
 );
 
@@ -56,17 +59,19 @@ module ex(
                 `EX_JAL: begin
                     branch_flag = `True;
                     branch_to  = pc + imm;
+                    BTB_  = pc + imm;
                     jump_flag = predicted_pc == branch_to ? `False : `True;
                     branch_taken = `True;
                 end
                 `EX_JALR: begin
-                    branch_flag = `True;
+                    branch_flag = `False;
                     branch_to  = {jalr_to[31:1], 1'b0};
                     jump_flag = predicted_pc == branch_to ? `False : `True;
                     branch_taken = `True;
                 end
                 `EX_BEQ: begin
                     branch_flag = `True;
+                    BTB_  = pc + imm;
                     if (r1 == r2) begin
                         branch_to  = pc + imm;
                         branch_taken = `True;
@@ -78,6 +83,7 @@ module ex(
                 end
                 `EX_BNE: begin
                     branch_flag = `True;
+                    BTB_  = pc + imm;
                     if (r1 != r2) begin
                         branch_to  = pc + imm;
                         branch_taken = `True;
@@ -89,6 +95,7 @@ module ex(
                 end
                 `EX_BLT: begin
                     branch_flag = `True;
+                    BTB_  = pc + imm;
                     if ($signed(r1) < $signed(r2)) begin
                         branch_to = pc + imm;
                         branch_taken = `True;
@@ -100,6 +107,7 @@ module ex(
                 end
                 `EX_BGE: begin
                     branch_flag = `True;
+                    BTB_  = pc + imm;
                     if ($signed(r1) >= $signed(r2)) begin
                         branch_to = pc + imm;
                         branch_taken = `True;
@@ -111,6 +119,7 @@ module ex(
                 end
                 `EX_BLTU: begin
                     branch_flag = `True;
+                    BTB_  = pc + imm;
                     if (r1 < r2) begin
                         branch_to = pc + imm;
                         branch_taken = `True;
@@ -122,6 +131,7 @@ module ex(
                 end
                 `EX_BGEU: begin
                     branch_flag = `True;
+                    BTB_  = pc + imm;
                     if (r1 >= r2) begin
                         branch_to = pc + imm;
                         branch_taken = `True;
@@ -195,7 +205,7 @@ module ex(
         end
     end
 
-    always @ (*) begin // Load and Store
+    always @ (*) begin 
         if (rst) begin
             mem_addr_o = `Zero;
             ld_flag = `False;

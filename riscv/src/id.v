@@ -1,6 +1,7 @@
 `include "config.v"
 module id(
     input wire rst,
+
     input wire [31 : 0] pc_i,
     input wire [31 : 0] inst,
     input wire [31 : 0] r1_data_i,
@@ -10,18 +11,16 @@ module id(
     input wire ex_wb_flag,
     input wire [4 : 0] ex_wb_addr,
     input wire [31 : 0] ex_forward,
-
+    
     input wire mem_wb_flag,
     input wire [4 : 0] mem_wb_addr,
     input wire [31 : 0] mem_forward,
 
-    //To Register
     output wire [4 : 0] r1_addr,
     output reg r1_read_enable,
     output wire [4 : 0] r2_addr,
     output reg r2_read_enable,
 
-    //To next stage
     output reg [31 : 0] pc_o,
     output reg [31 : 0] r1,
     output reg [31 : 0] r2,
@@ -39,7 +38,6 @@ module id(
     wire [2 : 0] func3 = inst[14 : 12];
     reg use_imm_instead;
     
-    //Decode: Get opcode, imm, rd, and the addr of rs1&rs2
 
     assign r1_addr = inst[19 : 15];
     assign r2_addr = inst[24 : 20];
@@ -416,7 +414,6 @@ module id(
     reg r1_stall;
     reg r2_stall;
 
-    //Get rs1
     always @ (*) begin
         r1_stall = `False;
         if (rst) begin
@@ -435,7 +432,6 @@ module id(
         end
     end
 
-    //Get rs2
     always @ (*) begin
         r2_stall = `False;
         if (rst == `True) begin

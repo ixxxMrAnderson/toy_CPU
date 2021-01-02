@@ -2,6 +2,7 @@
 module ex_mem(
     input wire clk,
     input wire rst,
+
     input wire [31 : 0] rd_data_i,
     input wire [4 : 0] rd_addr_i,
     input wire [31 : 0] mem_addr_i,
@@ -25,6 +26,7 @@ module ex_mem(
             rd_enable_o <= `Zero;
             mem_addr_o <= `Zero;
         end else if (stall_signal[3]) begin
+        
         end else begin
             aluop_o <= aluop_i;
             rd_data_o <= rd_data_i;

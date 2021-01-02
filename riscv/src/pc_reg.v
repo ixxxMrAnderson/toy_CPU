@@ -2,6 +2,7 @@
 module pc_reg(
 	input wire clk,
 	input wire rst,
+	
 	output reg [31 : 0] pc,
 
 	input wire jump_flag,
@@ -9,6 +10,7 @@ module pc_reg(
 	input wire branch_flag,
 	input wire [31 : 0] branch_pc,
 	input wire [31 : 0] branch_to,
+	input wire [31 : 0] BTB_,
 
 	input wire [4 : 0] stall_signal
 );
@@ -20,8 +22,8 @@ module pc_reg(
 	always @ (posedge clk) begin
 	    if (rst) begin
 	    	for (i = 0; i < 128; i = i + 1) begin
-    			BHT[i][10] <= 1'b1;
-    			BHT[i][1 : 0] <= 2'b01;
+    			BHT[i] <= 11'h401;
+    			BTB[i] <= `Zero;
     		end
 	        pc <= `Zero;
 	    end else if (jump_flag) begin
@@ -38,7 +40,7 @@ module pc_reg(
 
 	always @ (posedge clk) begin
 	    if (branch_flag && !rst) begin
-	    	BTB[branch_pc[8 : 2]] <= branch_to;
+	    	BTB[branch_pc[8 : 2]] <= BTB_;
 	    	BHT[branch_pc[8 : 2]][10 : 2] <= branch_pc[17 : 9];
 	    	if (branch_taken && BHT[branch_pc[8 : 2]][1 : 0] != 2'b11) begin
 	    		BHT[branch_pc[8 : 2]][1 : 0] <= BHT[branch_pc[8 : 2]][1 : 0] + 1;
