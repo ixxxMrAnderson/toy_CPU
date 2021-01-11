@@ -22,7 +22,7 @@ module register(
     always @ (posedge clk) begin
         if (rst) begin
             for (i = 0; i < 32; i = i + 1)
-                regs[i] = `Zero;
+                regs[i] <= `Zero;
         end else if (write_enable) begin
             if (write_addr)
                 regs[write_addr] <= write_data;

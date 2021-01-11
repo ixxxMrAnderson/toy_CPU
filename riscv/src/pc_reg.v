@@ -36,9 +36,7 @@ module pc_reg(
 	    		pc <= pc + 4;
 	    	end
 	    end
-	end
 
-	always @ (posedge clk) begin
 	    if (branch_flag && !rst) begin
 	    	BTB[branch_pc[8 : 2]] <= BTB_;
 	    	BHT[branch_pc[8 : 2]][10 : 2] <= branch_pc[17 : 9];
@@ -49,5 +47,5 @@ module pc_reg(
 	    	end
 	    end
 	end
-
+	
 endmodule
